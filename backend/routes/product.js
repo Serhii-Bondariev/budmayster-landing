@@ -1,8 +1,8 @@
 // product.js
 import express from 'express';
-import Product from '../models/Product.js'; // Має бути модель для товару
+import Product from '../models/Product.js';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js'; // Для перевірки ролі користувача
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -23,9 +23,14 @@ router.post("/add", async (req, res) => {
         }
 
         const { name, description, price } = req.body; // Дані товару
-        const newProduct = new Product({ name, description, price });
+        const existingProduct = await Product.findOne({ name });
+        if (existingProduct) {
+            return res.status(400).json({ message: 'Product with this name already exists' });
+        }
 
+        const newProduct = new Product({ name, description, price });
         await newProduct.save();
+
         res.status(201).json({ message: "Product added successfully", newProduct });
     } catch (error) {
         console.error(error);
@@ -33,7 +38,7 @@ router.post("/add", async (req, res) => {
     }
 });
 
-// product.js
+// Оновлення продукту
 router.put("/edit/:id", async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
@@ -66,6 +71,5 @@ router.put("/edit/:id", async (req, res) => {
       res.status(500).json({ message: "Server error" });
   }
 });
-
 
 export default router;

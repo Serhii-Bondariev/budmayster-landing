@@ -1,70 +1,54 @@
-// AddProductForm.js
-import React, { useState } from "react";
-import axios from "axios";
+// components/AddProductForm.jsx
+import React, { useState } from 'react';
+import { addProduct } from '../api/api';
 
-const AddProductForm = () => {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [message, setMessage] = useState("");
+const AddProductForm = ({ onSave }) => {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const productData = { name, description, price };
         try {
-            const token = localStorage.getItem("token"); // Отримуємо токен з LocalStorage
-
-            if (!token) {
-                setMessage("Please log in first");
-                return;
-            }
-
-            const response = await axios.post(
-                "/api/products/add",
-                { name, description, price },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            setMessage(response.data.message);
-            setName("");
-            setDescription("");
-            setPrice("");
+            await addProduct(productData);
+            onSave();
         } catch (error) {
-            setMessage(error.response?.data?.message || "Server error");
+            console.error(error);
         }
     };
 
     return (
-        <div>
-            <h2>Add New Product</h2>
-            <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Name:</label>
                 <input
                     type="text"
-                    placeholder="Product Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
-                <textarea
-                    placeholder="Product Description"
+            </div>
+            <div>
+                <label>Description:</label>
+                <input
+                    type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
                 />
+            </div>
+            <div>
+                <label>Price:</label>
                 <input
                     type="number"
-                    placeholder="Product Price"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     required
                 />
-                <button type="submit">Add Product</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
+            </div>
+            <button type="submit">Add Product</button>
+        </form>
     );
 };
 

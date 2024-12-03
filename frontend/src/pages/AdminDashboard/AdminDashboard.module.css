@@ -1,0 +1,70 @@
+/* AdminPanel.css */
+
+/* Основний контейнер для адмін-панелі */
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Контейнер для вмісту панелі адміністратора */
+.admin-content {
+  display: flex;
+  flex: 1;
+}
+
+/* Стороння панель */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.sidebar a:hover {
+  background-color: #34495e;
+}
+
+/* Головна частина контенту */
+.main-content {
+  margin-left: 250px; /* Відступ для основного контенту, щоб не перекривати sidebar */
+  padding: 20px;
+  flex: 1;
+  background-color: #ecf0f1;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.main-content h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Застосуємо стиль до заголовків */
+.main-content h1 {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+}
+
+/* Для відступів та загального вигляду */
+.admin-content {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}

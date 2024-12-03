@@ -1,33 +1,56 @@
+// models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
+// Оголошення схеми користувача
+  const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, 'Name is required'],
+        trim: true,
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         unique: true,
+        lowercase: true,
+        match: [
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            'Please provide a valid email address',
+        ],
     },
     password: {
         type: String,
-        required: true,
+        required: [true, 'Password is required'],
+        minlength: [6, 'Password must be at least 6 characters'],
     },
-    isAdmin: {
-        type: Boolean,
-        default: false,
+    role: {
+        type: String,
+        enum: ['user', 'admin'], // Визначення можливих ролей
+        default: 'user', // Роль за замовчуванням
     },
+}, {
+    timestamps: true,
 });
 
-// Хешування пароля перед збереженням
+
+// **Хешування пароля перед збереженням**
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        next();
+        return next(); // Якщо пароль не змінено, пропускаємо хешування
     }
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
+
+// **Метод для перевірки пароля**
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 export default mongoose.model('User', userSchema);

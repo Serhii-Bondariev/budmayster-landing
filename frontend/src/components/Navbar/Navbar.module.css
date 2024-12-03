@@ -1,0 +1,32 @@
+/* Для кастомізації стилів */
+.navbar {
+  border-bottom: 2px solid #fff;
+}
+
+.navbar-nav .nav-item .nav-link {
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  color: #ff6347; /* Зміна кольору при ховері */
+}
+
+.navbar-brand {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+.navbar-toggler-icon {
+  background-color: #fff;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .navbar-nav .nav-item {
+    margin-bottom: 1rem;
+  }
+}

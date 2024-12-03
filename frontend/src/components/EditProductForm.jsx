@@ -1,82 +1,82 @@
-// EditProductForm.js
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getProductById, updateProduct } from '../api/api';
 
-const EditProductForm = ({ productId }) => {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [message, setMessage] = useState("");
+const EditProductForm = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [product, setProduct] = useState({ name: '', description: '', price: '' });
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`/api/products/${productId}`);
-                const { name, description, price } = response.data;
-                setName(name);
-                setDescription(description);
-                setPrice(price);
+                const { data } = await getProductById(id);
+                setProduct(data);
             } catch (error) {
-                setMessage("Error fetching product data");
+                console.error("Error fetching product:", error);
             }
         };
-
         fetchProduct();
-    }, [productId]);
+    }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setMessage("Please log in first");
-                return;
-            }
-
-            const response = await axios.put(
-                `/api/products/edit/${productId}`,
-                { name, description, price },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            setMessage(response.data.message);
+            await updateProduct(id, product);
+            alert('Product updated successfully!');
+            navigate('/products');
         } catch (error) {
-            setMessage(error.response?.data?.message || "Server error");
+            alert('Error updating product!');
         }
     };
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProduct((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
     return (
-        <div>
+        <div className="container">
             <h2>Edit Product</h2>
             <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Product Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-                <textarea
-                    placeholder="Product Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Product Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                />
-                <button type="submit">Save Changes</button>
+                <div className="mb-3">
+                    <label>Name:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        name="name"
+                        value={product.name}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label>Description:</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        name="description"
+                        value={product.description}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label>Price:</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        name="price"
+                        value={product.price}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary">Update Product</button>
             </form>
-            {message && <p>{message}</p>}
         </div>
     );
 };

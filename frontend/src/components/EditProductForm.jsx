@@ -1,3 +1,4 @@
+// frontend/src/components/EditProductForm.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, updateProduct } from '../api/api';

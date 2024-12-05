@@ -16,7 +16,7 @@
 
 // export default Sidebar;
 
-// components/Sidebar.jsx
+// components/sidebar/Sidebar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 

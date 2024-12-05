@@ -9,53 +9,60 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const [user, setUser] = useState({ role: '', name: '', avatar: '', email: '' });
 
-  // Перевірка токена у localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const { role } = JSON.parse(atob(token.split('.')[1])); // Декодуємо токен
-        setIsAuthenticated(true); // Встановлюємо статус авторизації
-        setUserRole(role); // Зберігаємо роль користувача
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Розкодування токена
+        console.log(decodedToken); // Перевіряємо вміст токена в консолі
+        const emailFromToken = decodedToken?.email || 'Email'; // Якщо email відсутній, виводимо 'Guest'
+        const avatarFromToken = decodedToken?.avatar || 'https://www.gravatar.com/avatar';
+
+        setIsAuthenticated(true);
+        setUser({
+          role: decodedToken.role || 'Guest',
+          name: decodedToken.name || 'Guest',
+          email: decodedToken.email || 'Email',
+          avatar: localStorage.getItem('avatar') || 'https://www.gravatar.com/avatar',
+        });
       } catch (error) {
-        console.error('Invalid token', error);
+        console.error('Invalid token:', error);
         setIsAuthenticated(false);
+        setUser({ role: '', name: '', avatar: '', email: '' });
       }
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Видаляємо токен
-    setIsAuthenticated(false); // Скидаємо авторизацію
-    setUserRole(null); // Очищаємо роль
+    localStorage.clear();
+    setIsAuthenticated(false);
+    setUser({ role: '', name: '', avatar: '', email: '' });
   };
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <Navbar
+        isAuthenticated={isAuthenticated}
+        user={user}
+        onLogout={handleLogout}
+      />
       <Routes>
-        {/* Головна сторінка */}
         <Route path="/" element={<Home />} />
-
-        {/* Сторінка входу */}
-        <Route path="/login" element={<Login setAuth={setIsAuthenticated} setRole={setUserRole} />} />
-
-        {/* Сторінка реєстрації */}
+        <Route
+          path="/login"
+          element={<Login setAuth={setIsAuthenticated} setUser={setUser} />}
+        />
         <Route path="/register" element={<Register />} />
-
-        {/* Адмін панель доступна лише для адмінів */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute isAllowed={userRole === 'admin'}>
+            <ProtectedRoute requiredRole="admin" user={user}>
               <AdminDashboard />
             </ProtectedRoute>
           }
         />
-
-        {/* Редирект для невідомих маршрутів */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
@@ -66,61 +73,75 @@ export default App;
 
 
 
+
+
+
 // import React, { useState, useEffect } from 'react';
 // import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 // import Navbar from './components/Navbar/Navbar';
 // import Login from './pages/Login';
 // import Register from './pages/Register';
-// import AdminDashboard from './pages/AdminDashboard';
+// import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 // import Home from './pages/Home';
 // import ProtectedRoute from './components/ProtectedRoute';
 
 // const App = () => {
-//   const [isAdmin, setIsAdmin] = useState(false);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [userRole, setUserRole] = useState(null);
 
-//   // Перевіряємо токен у localStorage під час завантаження програми
+//   // Перевірка токена у localStorage
 //   useEffect(() => {
 //     const token = localStorage.getItem('token');
 //     if (token) {
 //       try {
-//         const user = JSON.parse(atob(token.split('.')[1])); // Декодуємо payload токена
-//         setIsAdmin(user.isAdmin || false);
+//         const { role } = JSON.parse(atob(token.split('.')[1])); // Декодуємо токен
+//         setIsAuthenticated(true); // Встановлюємо статус авторизації
+//         setUserRole(role); // Зберігаємо роль користувача
 //       } catch (error) {
-//         console.error('Invalid token format', error);
-//         setIsAdmin(false);
+//         console.error('Invalid token', error);
+//         setIsAuthenticated(false);
 //       }
 //     }
 //   }, []);
 
 //   const handleLogout = () => {
-//     localStorage.removeItem('token'); // Очищаємо токен
-//     setIsAdmin(false); // Скидаємо статус після виходу
+//     localStorage.removeItem('token'); // Видаляємо токен
+//     setIsAuthenticated(false); // Скидаємо авторизацію
+//     setUserRole(null); // Очищаємо роль
 //   };
 
 //   return (
 //     <Router>
-//       <Navbar isAdmin={isAdmin} onLogout={handleLogout} />
+//       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
 //       <Routes>
 //         {/* Головна сторінка */}
 //         <Route path="/" element={<Home />} />
 
 //         {/* Сторінка входу */}
-//         <Route path="/login" element={<Login />} />
+//         <Route path="/login" element={<Login setAuth={setIsAuthenticated} setRole={setUserRole} />} />
 
 //         {/* Сторінка реєстрації */}
 //         <Route path="/register" element={<Register />} />
 
-//         {/* Адмінка доступна тільки для адмінів */}
+//         {/* Адмін панель доступна лише для адмінів */}
 //         <Route
+//   path="/admin"
+//   element={
+//     <ProtectedRoute requiredRole="admin">
+//       <AdminDashboard />
+//     </ProtectedRoute>
+//   }
+// />
+//         {/* <Route
 //           path="/admin"
 //           element={
-//             <ProtectedRoute isAllowed={isAdmin}>
+//             <ProtectedRoute isAllowed={userRole === 'admin'}>
 //               <AdminDashboard />
 //             </ProtectedRoute>
 //           }
-//         />
+//         /> */}
 
-//         {/* Якщо немає збігу з маршрутами */}
+//         {/* Редирект для невідомих маршрутів */}
 //         <Route path="*" element={<Navigate to="/" />} />
 //       </Routes>
 //     </Router>

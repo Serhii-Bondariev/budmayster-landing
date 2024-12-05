@@ -1,4 +1,4 @@
-// components/AdminPanel.jsx
+// pages//AdminDashboard/AdminDashboard.jsx
 import React from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar';
 // import Navbar from '../../components/Navbar/Navbar';

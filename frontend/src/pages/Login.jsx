@@ -1,30 +1,36 @@
+// frontend/src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/api';
 
-const Login = ({ setAuth, setRole }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      const { data } = await loginUser({ email, password }); // Виклик API
-      localStorage.setItem('token', data.token); // Зберігаємо токен
-      setAuth(true); // Встановлюємо авторизацію
-      setRole(data.role); // Встановлюємо роль
+      // Виклик API для логіну
+      const { data } = await loginUser({ email, password });
+
+      // Збереження токена в Local Storage
+      localStorage.setItem('token', data.token);
 
       alert('Login successful!');
-
-      // Перевірка ролі користувача
-      if (data.role === 'admin') {
-        navigate('/admin'); // Перенаправлення на адмінку
-      } else {
-        navigate('/'); // Перенаправлення на головну сторінку
-      }
+      navigate('/'); // Перенаправлення на головну сторінку
     } catch (error) {
-      alert('Login failed!');
+      console.error('Login error:', error.response?.data || error.message);
+      setError('Login failed! Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,6 +38,7 @@ const Login = ({ setAuth, setRole }) => {
     <div className="container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
+        {error && <div className="alert alert-danger">{error}</div>}
         <div className="mb-3">
           <label>Email:</label>
           <input
@@ -52,7 +59,9 @@ const Login = ({ setAuth, setRole }) => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">Login</button>
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );

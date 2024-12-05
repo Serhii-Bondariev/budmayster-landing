@@ -64,12 +64,16 @@ router.post("/login", async (req, res) => {
       console.log(`Invalid password attempt for email: ${email}`);
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
     const token = jwt.sign(
-      { id: user._id, name: user.name, role: user.role },
+      { id: user._id, name: user.name, role: user.role, email: user.email }, // Додали email
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+    // const token = jwt.sign(
+    //   { id: user._id, name: user.name, role: user.role },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1h" }
+    // );
     console.log("Token generated:", token);
 
     return res.json({ token });
@@ -108,10 +112,16 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
     console.log("User saved:", user);
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, name: user.name, email: user.email }, // Додали email
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+
+    // const token = jwt.sign(
+    //   { id: user._id, role: user.role },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1h" }
+    // );
 
     res.status(201).json({ token, user });
   } catch (error) {

@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
+  const defaultAvatar = 'https://avatar.iran.liara.run/public/11'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState({ role: '', name: '', avatar: '', email: '' });
 
@@ -15,17 +16,16 @@ const App = () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Розкодування токена
-        console.log(decodedToken); // Перевіряємо вміст токена в консолі
-        const emailFromToken = decodedToken?.email || 'Email'; // Якщо email відсутній, виводимо 'Guest'
-        const avatarFromToken = decodedToken?.avatar || 'https://www.gravatar.com/avatar';
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Декодування токена
+        const avatarFromToken = decodedToken?.avatar || defaultAvatar;
+        localStorage.setItem('avatar', avatarFromToken);
 
         setIsAuthenticated(true);
         setUser({
           role: decodedToken.role || 'Guest',
           name: decodedToken.name || 'Guest',
           email: decodedToken.email || 'Email',
-          avatar: localStorage.getItem('avatar') || 'https://www.gravatar.com/avatar',
+          avatar: avatarFromToken,
         });
       } catch (error) {
         console.error('Invalid token:', error);
@@ -34,6 +34,31 @@ const App = () => {
       }
     }
   }, []);
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   if (token) {
+  //     try {
+  //       const decodedToken = JSON.parse(atob(token.split('.')[1])); // Розкодування токена
+  //       console.log(decodedToken); // Перевіряємо вміст токена в консолі
+  //       const emailFromToken = decodedToken?.email || 'Email'; // Якщо email відсутній, виводимо 'Guest'
+  //       const avatarFromToken = decodedToken?.avatar || `defaltAvatar`;
+  //       localStorage.setItem('avatar', avatarFromToken);
+
+  //       setIsAuthenticated(true);
+  //       setUser({
+  //         role: decodedToken.role || 'Guest',
+  //         name: decodedToken.name || 'Guest',
+  //         email: decodedToken.email || 'Email',
+  //         avatar: localStorage.getItem('avatar') || `defaltAvatar`,
+  //       });
+  //     } catch (error) {
+  //       console.error('Invalid token:', error);
+  //       setIsAuthenticated(false);
+  //       setUser({ role: '', name: '', avatar: '', email: '' });
+  //     }
+  //   }
+  // }, []);
 
   const handleLogout = () => {
     localStorage.clear();

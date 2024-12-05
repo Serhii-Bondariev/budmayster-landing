@@ -41,13 +41,13 @@ const Navbar = ({ onLogout, user }) => {
               <>
                 <li className="nav-item d-flex align-items-center">
                   <img
-                    src={user?.avatar || 'https://www.gravatar.com/avatar/?d=mp'}
+                    src={user?.avatar || 'hhttps://via.placeholder.com/150'}
                     alt="Avatar"
                     className="rounded-circle me-2 border border-light"
                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                   />
                  <span className="text-white me-3">
-  {`Welcome back, ${user?.name || 'Guest'} (${user?.role || 'User'}) ${user?.email ? `(${user.email})` : ''}`}
+  {`Welcome back, ${user?.role || 'User'} ${user?.name || 'Guest'}     ${user?.email ? `${user.email}` : ''}`}
 </span>
 
                 </li>

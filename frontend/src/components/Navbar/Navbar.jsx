@@ -46,9 +46,15 @@ const Navbar = ({ onLogout, user }) => {
                     className="rounded-circle me-2 border border-light"
                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                   />
-                 <span className="text-white me-3">
+                  <div
+                  className="text-white me-3">
+<p>Welcome back  {user?.name || 'Guest'}</p>
+{/* <p>{user?.role || 'User'}</p> */}
+<p>{user?.email ? `${user.email}` : ''}</p>
+                  </div>
+                 {/* <span className="text-white me-3">
   {`Welcome back, ${user?.role || 'User'} ${user?.name || 'Guest'}     ${user?.email ? `${user.email}` : ''}`}
-</span>
+</span> */}
 
                 </li>
                 <li className="nav-item">

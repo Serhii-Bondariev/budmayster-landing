@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://www.gravatar.com/avatar",
+      default: "https://i.pravatar.cc/300",
     },
   },
   {

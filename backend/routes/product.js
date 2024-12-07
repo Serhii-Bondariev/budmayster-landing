@@ -72,4 +72,42 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
+router .delete("/delete/:id", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+  }
+
+  try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+
+      if (!user || !user.isAdmin) {
+          return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const product = await Product.findById(req.params.id);
+      if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+      }
+
+      await product.remove();
+      res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+  }
+});
+
+router .get("/all", async (req, res) => {
+  try {
+      const products = await Product.find();
+      res.status(200).json({ products });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

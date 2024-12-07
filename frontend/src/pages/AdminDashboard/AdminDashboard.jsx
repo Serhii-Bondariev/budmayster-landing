@@ -1,6 +1,7 @@
 // pages//AdminDashboard/AdminDashboard.jsx
 import React from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import AddProductForm from '../../components/AddProductForm';
 // import Navbar from '../../components/Navbar/Navbar';
 
 const AdminDashboard = () => {
@@ -11,6 +12,7 @@ const AdminDashboard = () => {
         {/* <Navbar /> */}
         <div className="container py-4">
           <h1>Welcome to the Admin Panel</h1>
+          <AddProductForm onSave={() => {}} />
           {/* В залежності від маршруту тут може бути контент */}
         </div>
       </div>

@@ -8,6 +8,7 @@ const Login = ({ setAuth, setUser }) => { // Отримуємо setUser чере
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const defaultAvatar = 'https://i.pravatar.cc/300'
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,10 +29,10 @@ const Login = ({ setAuth, setUser }) => { // Отримуємо setUser чере
         name: decodedToken.name,
         role: decodedToken.role,
         email: decodedToken.email,
-        avatar: decodedToken.avatar || 'https://www.gravatar.com/avatar',
+        avatar: decodedToken.avatar || defaultAvatar
       });
 
-      alert('Login successful!');
+      // alert('Login successful!');
       navigate('/'); // Перенаправлення на головну сторінку
     } catch (error) {
       console.error('Login error:', error.response?.data || error.message);

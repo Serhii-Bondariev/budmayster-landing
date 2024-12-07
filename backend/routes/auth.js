@@ -112,7 +112,7 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
     console.log("User saved:", user);
 
     const token = jwt.sign(
-      { id: user._id, role: user.role, name: user.name, email: user.email }, // Додали email
+      { id: user._id, role: user.role, name: user.name, email: user.email, avatar: user.avatar }, // Додали email
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );

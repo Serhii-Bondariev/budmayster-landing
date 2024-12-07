@@ -5,6 +5,7 @@ const Navbar = ({ onLogout, user }) => {
   const navigate = useNavigate();
   const isAuthenticated = !!user?.role; // Користувач вважається автентифікованим, якщо у нього є роль
   const isAdmin = user?.role === 'admin'; // Перевірка ролі адміністратора
+const defaultAvatar = 'https://via.placeholder.com/150';
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to log out?')) {
@@ -41,7 +42,7 @@ const Navbar = ({ onLogout, user }) => {
               <>
                 <li className="nav-item d-flex align-items-center">
                   <img
-                    src={user?.avatar || 'hhttps://via.placeholder.com/150'}
+                    src={user?.avatar || defaultAvatar}
                     alt="Avatar"
                     className="rounded-circle me-2 border border-light"
                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
